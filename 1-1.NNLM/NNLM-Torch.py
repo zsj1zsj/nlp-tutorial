@@ -18,7 +18,7 @@ n_class = len(word_dict) # number of Vocabulary
 # NNLM Parameter
 n_step = 2 # n-1 in paper
 n_hidden = 2 # h in paper
-m = 2 # m in paper
+m = 2 # m in paper m:表示词向量C(w)的维度，一般是50到100
 
 def make_batch(sentences):
     input_batch = []
@@ -38,12 +38,12 @@ def make_batch(sentences):
 class NNLM(nn.Module):
     def __init__(self):
         super(NNLM, self).__init__()
-        self.C = nn.Embedding(n_class, m)
-        self.H = nn.Parameter(torch.randn(n_step * m, n_hidden).type(dtype))
-        self.W = nn.Parameter(torch.randn(n_step * m, n_class).type(dtype))
-        self.d = nn.Parameter(torch.randn(n_hidden).type(dtype))
-        self.U = nn.Parameter(torch.randn(n_hidden, n_class).type(dtype))
-        self.b = nn.Parameter(torch.randn(n_class).type(dtype))
+        self.C = nn.Embedding(n_class, m)  #C：词向量C(w)存在于矩阵C(|V|*m)中，矩阵C的行数表示词汇表的大小；列数表示词向量C(w)的维度。矩阵C的某一行对应一个单词的词向量表示。
+        self.H = nn.Parameter(torch.randn(n_step * m, n_hidden).type(dtype)) #H: 隐藏层的权重(h*(n-1)m)
+        self.W = nn.Parameter(torch.randn(n_step * m, n_class).type(dtype)) #W:输入层到输出层权重(|V|*(n-1)m)
+        self.d = nn.Parameter(torch.randn(n_hidden).type(dtype)) #d:隐藏层偏置bias(h)
+        self.U = nn.Parameter(torch.randn(n_hidden, n_class).type(dtype)) #U:隐藏层到输出层的权重(|V|*h)
+        self.b = nn.Parameter(torch.randn(n_class).type(dtype)) #b:输出层的偏置bias(|V|)
 
     def forward(self, X):
         X = self.C(X)
